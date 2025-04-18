@@ -20,6 +20,7 @@
 	},
 	"dependencies": {
 		"@asteasolutions/zod-to-openapi": "7.3.0",
+		"@llamaindex/google": "^0.2.3",
 		"cors": "2.8.5",
 		"dotenv": "16.5.0",
 		"envalid": "8.0.0",
@@ -27,6 +28,7 @@
 		"express-rate-limit": "7.5.0",
 		"helmet": "8.1.0",
 		"http-status-codes": "2.3.0",
+		"llamaindex": "^0.10.1",
 		"pino": "9.6.0",
 		"pino-http": "10.4.0",
 		"swagger-ui-express": "5.0.1",
@@ -48,7 +50,11 @@
 		"vitest": "3.1.1"
 	},
 	"tsup": {
-		"entry": ["src", "!src/**/__tests__/**", "!src/**/*.test.*"],
+		"entry": [
+			"src",
+			"!src/**/__tests__/**",
+			"!src/**/*.test.*"
+		],
 		"splitting": false,
 		"sourcemap": true,
 		"clean": true
