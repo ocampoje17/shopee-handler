@@ -16,3 +16,7 @@ export const SummarySchema = z.object({
 export const GetSummarySchema = z.object({
 	params: z.object({ id: commonValidations.id }),
 });
+
+export const CreateSummarySchema = z.object({
+	body: z.object({ textToSummarize: z.string(), summaryType: z.string() }),
+});

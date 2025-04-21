@@ -3,7 +3,7 @@ import express, { type Router } from "express";
 import { z } from "zod";
 
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { GetSummarySchema, SummarySchema } from "@/api/summary/summaryModel";
+import { CreateSummarySchema, GetSummarySchema, SummarySchema } from "@/api/summary/summaryModel";
 import { validateRequest } from "@/common/utils/httpHandlers";
 import { summaryController } from "./summaryController";
 
@@ -23,14 +23,39 @@ summaryRegistry.register("Summary", SummarySchema);
 
 summaryRegistry.registerPath({
 	method: "get",
-	path: "/summarys",
+	path: "/summaries",
 	tags: ["Summary"],
 	request: { params: GetSummarySchema.shape.params },
 	responses: createApiResponse(SummarySchema, "Success"),
 });
 
-summaryRouter.get(
-	"/:id",
-	validateRequest(GetSummarySchema),
-	summaryController.getSummary
+// summaryRouter.get(
+// 	"/:id",
+// 	validateRequest(GetSummarySchema),
+// 	summaryController.getSummary
+// );
+
+summaryRegistry.registerPath({
+	method: "post",
+	path: "/summaries/create",
+	tags: ["Summary"],
+	request: {
+		body: {
+			content: {
+				'application/json': {
+					schema: CreateSummarySchema.shape.body
+				}
+			}
+		}
+	},
+	responses: createApiResponse(SummarySchema, "Success"),
+});
+
+summaryRouter.post(
+	"/create",
+	validateRequest(CreateSummarySchema),
+	summaryController.createSummary
 );
+
+
+
