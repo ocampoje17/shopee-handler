@@ -20,3 +20,9 @@ export const GetSummarySchema = z.object({
 export const CreateSummarySchema = z.object({
 	body: z.object({ textToSummarize: z.string(), summaryType: z.string() }),
 });
+
+export const RetriveInfoSchema = z.object({
+	body: z.object({
+		rawInfo: z.string(),
+	}),
+});

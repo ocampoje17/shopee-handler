@@ -12,7 +12,19 @@ class SummaryController {
 		// const serviceResponse = await summaryService.findById(id);
 		const textToSummarize = req.body.textToSummarize;
 		const summaryType = req.body.summaryType;
-		const serviceResponse = await summaryService.sumarize(textToSummarize, summaryType);
+		const serviceResponse = await summaryService.sumarize(
+			textToSummarize,
+			summaryType
+		);
+		return handleServiceResponse(serviceResponse, res);
+	};
+
+	public getInformation: RequestHandler = async (
+		req: Request,
+		res: Response
+	) => {
+		const rawInfo = req.body.rawInfo;
+		const serviceResponse = await summaryService.getInformation();
 		return handleServiceResponse(serviceResponse, res);
 	};
 }

@@ -3,7 +3,7 @@ import express, { type Router } from "express";
 import { z } from "zod";
 
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { CreateSummarySchema, GetSummarySchema, SummarySchema } from "@/api/summary/summaryModel";
+import { CreateSummarySchema, GetSummarySchema, RetriveInfoSchema, SummarySchema } from "@/api/summary/summaryModel";
 import { validateRequest } from "@/common/utils/httpHandlers";
 import { summaryController } from "./summaryController";
 
@@ -57,5 +57,25 @@ summaryRouter.post(
 	summaryController.createSummary
 );
 
+summaryRegistry.registerPath({
+	method: "get",
+	path: "/summaries/retriveInfo",
+	tags: ["Summary"],
+	// request: {
+	// 	body: {
+	// 		content: {
+	// 			'application/json': {
+	// 				schema: RetriveInfoSchema.shape.body
+	// 			}
+	// 		}
+	// 	}
+	// },
+	responses: createApiResponse(SummarySchema, "Success"),
+});
 
+summaryRouter.get(
+	"/retriveInfo",
+	// validateRequest(CreateSummarySchema),
+	summaryController.getInformation
+);
 
