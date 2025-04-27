@@ -58,24 +58,24 @@ summaryRouter.post(
 );
 
 summaryRegistry.registerPath({
-	method: "get",
+	method: "post",
 	path: "/summaries/retriveInfo",
 	tags: ["Summary"],
-	// request: {
-	// 	body: {
-	// 		content: {
-	// 			'application/json': {
-	// 				schema: RetriveInfoSchema.shape.body
-	// 			}
-	// 		}
-	// 	}
-	// },
+	request: {
+		body: {
+			content: {
+				'application/json': {
+					schema: RetriveInfoSchema.shape.body
+				}
+			}
+		}
+	},
 	responses: createApiResponse(SummarySchema, "Success"),
 });
 
-summaryRouter.get(
+summaryRouter.post(
 	"/retriveInfo",
-	// validateRequest(CreateSummarySchema),
+	validateRequest(RetriveInfoSchema),
 	summaryController.getInformation
 );
 

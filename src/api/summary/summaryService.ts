@@ -374,7 +374,31 @@ export class SummaryService {
 	// 	}
 	// }
 
-	async getInformation(): Promise<ServiceResponse<Summary | null>> {
+	removeRedundantInString(text: string): string {
+		// Trim string
+		let resultText = text.trim();
+
+		// Remove all emojis
+		resultText = resultText.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F200}-\u{1F2FF}]/gu, '');
+
+		// Remove any extra padding
+		resultText = resultText.replace(/\s{2,}/g, ' ');
+
+		// Replace newlines with spaces
+		resultText = resultText.replace(/[\n\r]+/g, ' ');
+
+		// Replace multiple spaces with single space
+		resultText = resultText.replace(/\s+/g, ' ');
+
+		// Final trim
+		resultText = resultText.trim();
+
+		return resultText;
+	}
+
+	async getInfo(
+		inputTexts: string[]
+	): Promise<ServiceResponse<Summary | null>> {
 		try {
 			const embedding = new GeminiEmbedding({
 				model: GEMINI_EMBEDDING_MODEL.TEXT_EMBEDDING_004,
@@ -388,13 +412,19 @@ export class SummaryService {
 			Settings.llm = googleLLM;
 			Settings.embedModel = embedding;
 
-			const documents = [
-				new Document({
-					text: `
-					CHI TIẾT SẢN PHẨM\n-----------------\n\n### Danh Mục\n\nShopeeNhà Cửa & Đời SốngNgoài trời & Sân vườnThiết bị làm vườn lớn\n\n### Kho\n\n91\n\n### Thương hiệu\n\nTAKAGI\n\n### Loại bảo hành\n\nBảo hành nhà sản xuất\n\n### Xuất xứ\n\nViệt Nam\n\n### Hạn bảo hành\n\n24 tháng\n\n### Gửi từ\n\nHà Nội\n\nMÔ TẢ SẢN PHẨM\n--------------\n\nLưu ý: Bộ tưới sử dụng dây có đường kính chỉ 7,5mm, vì vậy cần phải có áp lực nước mạnh để đạt được tính năng tốt nhất, cụ thể mức tối thiểu là 5 bar. Nếu áp lực nước yếu, bộ tưới sẽ phun ra rất yếu.\n\nBộ Vòi Tưới Cây Takagi 10-20m Nano Next - Giải Pháp Hoàn Hảo Cho Khu Vườn Của Bạn\n\nVòi tưới cây Takagi 10m Nano Next, mã sản phẩm RM1110BR, là lựa chọn hoàn hảo cho nhu cầu tưới cây, tưới hoa, rửa xe, và rửa sân vườn. Với thiết kế nhỏ gọn, vòi tưới này có thể dễ dàng mang đi bất cứ đâu như một chiếc hộp bánh nhỏ.\n\nTổng Quan Về Vòi Tưới Cây Takagi 10-20m\n\nMã sản phẩm: RM1110BR\n\nKích thước hộp: 137 × 226 × 227mm (bộ 10 mét)\n\nTrọng lượng: Khoảng 2kg\n\nĐặc điểm:\n\nGọn, nhẹ, dễ cuộn và dễ cầm đi\n\n4 chế độ nước: tưới bồng, vòi sen, phun sương, xối thẳng\n\nDễ dàng gắn với vòi nước nhờ dụng cụ gắn trung gian riêng biệt\n\nĐặc Điểm Nổi Bật Của Vòi Tưới Cây Takagi 10-20m\n\nThiết Kế Nhỏ Gọn, Dễ Dàng Thao Tác Và Vận Chuyển\n\nVòi tưới cây Takagi 10m được thiết kế nhỏ gọn nhất trong lịch sử vòi vườn của Takagi nhờ hệ thống cuộn W. Cả ống dẫn nước vào bộ vòi và ống dẫn nước tưới cây đều có thể cuộn gọn nhẹ nhàng và gập vào cùng một bên, tạo thành một hình hộp nhỏ gọn. Ngay cả trẻ nhỏ cũng có thể dễ dàng xách trên tay.\n\nDễ Dàng Lắp Ráp\n\nPhụ nữ và trẻ em có thể dễ dàng thao tác lắp ráp vòi nhờ vào bộ phận núm nối đi kèm với bộ sản phẩm. Núm vặn dễ dàng thao tác với mọi loại vòi, đảm bảo quá trình lắp đặt nhanh chóng và tiện lợi.\n\nĐầu Vòi Nhiều Chế Độ Phun\n\nBộ vòi tưới cây Takagi 10m cung cấp bốn chế độ phun nước linh hoạt, đáp ứng đa dạng nhu cầu sử dụng:\n\nPhun sương: Hạt sương nhỏ, mịn, lý tưởng để tưới hoa.\n\nXối thẳng: Vòi nước mạnh mẽ, thích hợp để rửa xe và làm sạch sân vườn với khoảng cách phun xa tới 10m.\n\nTưới bồng: Phù hợp cho việc tưới cây cảnh và hoa.\n\nTưới hoa sen: Mang lại trải nghiệm tưới cây dịu nhẹ.\n\nThiết Kế Thông Minh Và Tiện Lợi\n\nGọn Nhẹ, Dễ Dàng Mang Theo\n\nThiết kế gọn nhẹ của vòi tưới cây Takagi 10m giúp bạn dễ dàng mang theo và sử dụng bất cứ lúc nào cần thiết. Kích thước nhỏ gọn cũng giúp tiết kiệm không gian lưu trữ, làm cho sản phẩm trở nên lý tưởng cho mọi khu vườn, dù nhỏ hay lớn.\n\nChất Liệu Cao Cấp, Chống Xoắn Hiệu Quả\n\nVòi tưới được làm từ chất liệu cao cấp, giúp chống xoắn hiệu quả và tăng độ bền cho sản phẩm. Điều này giúp bạn yên tâm sử dụng trong thời gian dài mà không lo lắng về các vấn đề như gãy, hỏng hoặc xoắn vòi.\n\nDễ Dàng Lắp Đặt Với Nhiều Loại Vòi\n\nBộ vòi Takagi được thiết kế để dễ dàng lắp đặt với nhiều loại vòi khác nhau. Bộ phận núm nối đi kèm giúp việc lắp ráp trở nên đơn giản, không cần sử dụng nhiều dụng cụ phức tạp.\n\n#Bovoituoicay #voituoicay #dolamvuon #dungcutuoicay #voiphun #thietbisanvuon\n\nĐÁNH GIÁ SẢN PHẨM\n\n*   Product Reviews\n    \n*   Similar Product\n    \n\n4.9 trên 5\n\ntất cả\n\n5 Sao (61)\n\n4 Sao (1)\n\n3 Sao (2)\n\n2 Sao (0)\n\n1 Sao (1)\n\nCó Bình luận (11)\n\nCó hình ảnh / video (5)\n\nlaptop197\n\n2025-01-12 21:32 | Phân loại hàng: 15 mét\n\nClip mang tính chất nhận xu Bộ tưới cây này nhỏ gọn, tiện lợi, đúng chất Nhật, từ ống cấp đến vòi tưới xịn sò Nếu biết có bộ này thì đã mua sớm hơn Đúng kiểu tưới cây chứ mấy vòi tưới ngoài thị trường xịt rẽ cả đất bạt cả lá Shop ship nhanh, hàng chất lượng 5\\* ko có nhưng\n\n0:04\n\n*   \n*   \n*   \n*   \n\nphản hồi của Người Bán\n\nShop cảm ơn bạn đã yêu thích sản phẩm của shop và đánh giá 5 sao cho shop. Đây là động lực giúp shop tiếp tục cố gắng và phục vụ khách hàng, đem đến những sản phẩm tốt nhất. Hy vọng bạn sẽ luôn ủng hộ shop lâu dài nhé!\n\n7\n\nbáo cáo\n\nyennguyenhai006\n\n2025-01-20 17:50 | Phân loại hàng: 15 mét\n\nChất lượng sản phẩm: tốt\n\nBộ vòi tưới cây dùng thực sự rất thik, đặc biệt là đầu vòi có thể điều chỉnh được nên tưới cây ở trên cao rất thuận tiện. Mình khuyên dùng nhé.\n\nphản hồi của Người Bán\n\nChào bạn, cảm ơn bạn đã tin dùng sản phẩm chính hãng tại shop. Chúc bạn có nhiều trải nghiệm tuyệt vời với sản phẩm. Rất mong sẽ được tiếp tục phục vụ bạn ở những đơn hàng tiếp theo!\n\nhữu ích?\n\nbáo cáo\n\nb\\*\\*\\*\\*\\*h\n\n2024-12-21 08:52 | Phân loại hàng: 20 mét\n\nTai khoan chinh cua Quy khach khong du de thuc hien gui tin SMS. Soan Y gui (hieu luc trong 48h) de duoc ung 10 tin nhan ngoai mang voi tu VinaPhone va dong y cho VNPT xu ly du lieu KH theo chinh sach tai htmy.vnpt.com.vn/ti-tu. Tu choi nhan tin, soan TC M gui 9345. CSKH: (0d)\n\nhữu ích?\n\nbáo cáo\n\nd\\*\\*\\*\\*\\*n\n\n2025-02-14 09:01 | Phân loại hàng: 15 mét\n\nSản phẩm dùng ok, giao hàng nhanh, chsuj njdxhh xfyreb njjtcbhg\n\n0:04\n\n*   \n\nphản hồi của Người Bán\n\nChào bạn, cảm ơn bạn đã tin dùng sản phẩm chính hãng tại shop. Chúc bạn có nhiều trải nghiệm tuyệt vời với sản phẩm. Rất mong sẽ được tiếp tục phục vụ bạn ở những đơn hàng tiếp theo!\n\n1\n\nbáo cáo\n\ng\\*\\*\\*\\*\\*3\n\n2025-01-26 10:45 | Phân loại hàng: 20 mét\n\nHàng tốt shop uy tín đánh giá nhận xu. Giáo hàng nhanh, đóng gói cẩn thận.\n\nphản hồi của Người Bán\n\nChào bạn, cảm ơn bạn đã tin dùng sản phẩm chính hãng tại shop. Chúc bạn có nhiều trải nghiệm tuyệt vời với sản phẩm. Rất mong sẽ được tiếp tục phục vụ bạn ở những đơn hàng tiếp theo!\n\nhữu ích?\n\nbáo cáo\n\nntvinh1503\n\n2024-12-25 19:39 | Phân loại hàng: 10 mét\n\nChất lượng Tagaki thì 10đ\n\n*   \n\nphản hồi của Người Bán\n\nCảm ơn Quý khách hàng vì đã tin tưởng và lựa chọn sản phẩm của công ty chúng tôi. Chúc bạn sẽ có được những trải nghiệm tuyệt vời nhất cùng với sản phẩm!\n\n1\n\nbáo cáo\n\n12345...
-					`,
-				}),
-			];
+			// const documents = [
+			// 	new Document({
+			// 		text: `
+			// 		CHI TIẾT SẢN PHẨM\n-----------------\n\n### Danh Mục\n\nShopeeNhà Cửa & Đời SốngNgoài trời & Sân vườnThiết bị làm vườn lớn\n\n### Kho\n\n91\n\n### Thương hiệu\n\nTAKAGI\n\n### Loại bảo hành\n\nBảo hành nhà sản xuất\n\n### Xuất xứ\n\nViệt Nam\n\n### Hạn bảo hành\n\n24 tháng\n\n### Gửi từ\n\nHà Nội\n\nMÔ TẢ SẢN PHẨM\n--------------\n\nLưu ý: Bộ tưới sử dụng dây có đường kính chỉ 7,5mm, vì vậy cần phải có áp lực nước mạnh để đạt được tính năng tốt nhất, cụ thể mức tối thiểu là 5 bar. Nếu áp lực nước yếu, bộ tưới sẽ phun ra rất yếu.\n\nBộ Vòi Tưới Cây Takagi 10-20m Nano Next - Giải Pháp Hoàn Hảo Cho Khu Vườn Của Bạn\n\nVòi tưới cây Takagi 10m Nano Next, mã sản phẩm RM1110BR, là lựa chọn hoàn hảo cho nhu cầu tưới cây, tưới hoa, rửa xe, và rửa sân vườn. Với thiết kế nhỏ gọn, vòi tưới này có thể dễ dàng mang đi bất cứ đâu như một chiếc hộp bánh nhỏ.\n\nTổng Quan Về Vòi Tưới Cây Takagi 10-20m\n\nMã sản phẩm: RM1110BR\n\nKích thước hộp: 137 × 226 × 227mm (bộ 10 mét)\n\nTrọng lượng: Khoảng 2kg\n\nĐặc điểm:\n\nGọn, nhẹ, dễ cuộn và dễ cầm đi\n\n4 chế độ nước: tưới bồng, vòi sen, phun sương, xối thẳng\n\nDễ dàng gắn với vòi nước nhờ dụng cụ gắn trung gian riêng biệt\n\nĐặc Điểm Nổi Bật Của Vòi Tưới Cây Takagi 10-20m\n\nThiết Kế Nhỏ Gọn, Dễ Dàng Thao Tác Và Vận Chuyển\n\nVòi tưới cây Takagi 10m được thiết kế nhỏ gọn nhất trong lịch sử vòi vườn của Takagi nhờ hệ thống cuộn W. Cả ống dẫn nước vào bộ vòi và ống dẫn nước tưới cây đều có thể cuộn gọn nhẹ nhàng và gập vào cùng một bên, tạo thành một hình hộp nhỏ gọn. Ngay cả trẻ nhỏ cũng có thể dễ dàng xách trên tay.\n\nDễ Dàng Lắp Ráp\n\nPhụ nữ và trẻ em có thể dễ dàng thao tác lắp ráp vòi nhờ vào bộ phận núm nối đi kèm với bộ sản phẩm. Núm vặn dễ dàng thao tác với mọi loại vòi, đảm bảo quá trình lắp đặt nhanh chóng và tiện lợi.\n\nĐầu Vòi Nhiều Chế Độ Phun\n\nBộ vòi tưới cây Takagi 10m cung cấp bốn chế độ phun nước linh hoạt, đáp ứng đa dạng nhu cầu sử dụng:\n\nPhun sương: Hạt sương nhỏ, mịn, lý tưởng để tưới hoa.\n\nXối thẳng: Vòi nước mạnh mẽ, thích hợp để rửa xe và làm sạch sân vườn với khoảng cách phun xa tới 10m.\n\nTưới bồng: Phù hợp cho việc tưới cây cảnh và hoa.\n\nTưới hoa sen: Mang lại trải nghiệm tưới cây dịu nhẹ.\n\nThiết Kế Thông Minh Và Tiện Lợi\n\nGọn Nhẹ, Dễ Dàng Mang Theo\n\nThiết kế gọn nhẹ của vòi tưới cây Takagi 10m giúp bạn dễ dàng mang theo và sử dụng bất cứ lúc nào cần thiết. Kích thước nhỏ gọn cũng giúp tiết kiệm không gian lưu trữ, làm cho sản phẩm trở nên lý tưởng cho mọi khu vườn, dù nhỏ hay lớn.\n\nChất Liệu Cao Cấp, Chống Xoắn Hiệu Quả\n\nVòi tưới được làm từ chất liệu cao cấp, giúp chống xoắn hiệu quả và tăng độ bền cho sản phẩm. Điều này giúp bạn yên tâm sử dụng trong thời gian dài mà không lo lắng về các vấn đề như gãy, hỏng hoặc xoắn vòi.\n\nDễ Dàng Lắp Đặt Với Nhiều Loại Vòi\n\nBộ vòi Takagi được thiết kế để dễ dàng lắp đặt với nhiều loại vòi khác nhau. Bộ phận núm nối đi kèm giúp việc lắp ráp trở nên đơn giản, không cần sử dụng nhiều dụng cụ phức tạp.\n\n#Bovoituoicay #voituoicay #dolamvuon #dungcutuoicay #voiphun #thietbisanvuon\n\nĐÁNH GIÁ SẢN PHẨM\n\n*   Product Reviews\n    \n*   Similar Product\n    \n\n4.9 trên 5\n\ntất cả\n\n5 Sao (61)\n\n4 Sao (1)\n\n3 Sao (2)\n\n2 Sao (0)\n\n1 Sao (1)\n\nCó Bình luận (11)\n\nCó hình ảnh / video (5)\n\nlaptop197\n\n2025-01-12 21:32 | Phân loại hàng: 15 mét\n\nClip mang tính chất nhận xu Bộ tưới cây này nhỏ gọn, tiện lợi, đúng chất Nhật, từ ống cấp đến vòi tưới xịn sò Nếu biết có bộ này thì đã mua sớm hơn Đúng kiểu tưới cây chứ mấy vòi tưới ngoài thị trường xịt rẽ cả đất bạt cả lá Shop ship nhanh, hàng chất lượng 5\\* ko có nhưng\n\n0:04\n\n*   \n*   \n*   \n*   \n\nphản hồi của Người Bán\n\nShop cảm ơn bạn đã yêu thích sản phẩm của shop và đánh giá 5 sao cho shop. Đây là động lực giúp shop tiếp tục cố gắng và phục vụ khách hàng, đem đến những sản phẩm tốt nhất. Hy vọng bạn sẽ luôn ủng hộ shop lâu dài nhé!\n\n7\n\nbáo cáo\n\nyennguyenhai006\n\n2025-01-20 17:50 | Phân loại hàng: 15 mét\n\nChất lượng sản phẩm: tốt\n\nBộ vòi tưới cây dùng thực sự rất thik, đặc biệt là đầu vòi có thể điều chỉnh được nên tưới cây ở trên cao rất thuận tiện. Mình khuyên dùng nhé.\n\nphản hồi của Người Bán\n\nChào bạn, cảm ơn bạn đã tin dùng sản phẩm chính hãng tại shop. Chúc bạn có nhiều trải nghiệm tuyệt vời với sản phẩm. Rất mong sẽ được tiếp tục phục vụ bạn ở những đơn hàng tiếp theo!\n\nhữu ích?\n\nbáo cáo\n\nb\\*\\*\\*\\*\\*h\n\n2024-12-21 08:52 | Phân loại hàng: 20 mét\n\nTai khoan chinh cua Quy khach khong du de thuc hien gui tin SMS. Soan Y gui (hieu luc trong 48h) de duoc ung 10 tin nhan ngoai mang voi tu VinaPhone va dong y cho VNPT xu ly du lieu KH theo chinh sach tai htmy.vnpt.com.vn/ti-tu. Tu choi nhan tin, soan TC M gui 9345. CSKH: (0d)\n\nhữu ích?\n\nbáo cáo\n\nd\\*\\*\\*\\*\\*n\n\n2025-02-14 09:01 | Phân loại hàng: 15 mét\n\nSản phẩm dùng ok, giao hàng nhanh, chsuj njdxhh xfyreb njjtcbhg\n\n0:04\n\n*   \n\nphản hồi của Người Bán\n\nChào bạn, cảm ơn bạn đã tin dùng sản phẩm chính hãng tại shop. Chúc bạn có nhiều trải nghiệm tuyệt vời với sản phẩm. Rất mong sẽ được tiếp tục phục vụ bạn ở những đơn hàng tiếp theo!\n\n1\n\nbáo cáo\n\ng\\*\\*\\*\\*\\*3\n\n2025-01-26 10:45 | Phân loại hàng: 20 mét\n\nHàng tốt shop uy tín đánh giá nhận xu. Giáo hàng nhanh, đóng gói cẩn thận.\n\nphản hồi của Người Bán\n\nChào bạn, cảm ơn bạn đã tin dùng sản phẩm chính hãng tại shop. Chúc bạn có nhiều trải nghiệm tuyệt vời với sản phẩm. Rất mong sẽ được tiếp tục phục vụ bạn ở những đơn hàng tiếp theo!\n\nhữu ích?\n\nbáo cáo\n\nntvinh1503\n\n2024-12-25 19:39 | Phân loại hàng: 10 mét\n\nChất lượng Tagaki thì 10đ\n\n*   \n\nphản hồi của Người Bán\n\nCảm ơn Quý khách hàng vì đã tin tưởng và lựa chọn sản phẩm của công ty chúng tôi. Chúc bạn sẽ có được những trải nghiệm tuyệt vời nhất cùng với sản phẩm!\n\n1\n\nbáo cáo\n\n12345...
+			// 		`,
+			// 	}),
+			// ];
+
+			const documents = inputTexts.map((text) => {
+				return new Document({
+					text: this.removeRedundantInString(text),
+				});
+			});
 
 			const vectorIndex = await VectorStoreIndex.fromDocuments(documents);
 
@@ -402,7 +432,9 @@ export class SummaryService {
 				similarityTopK: 8,
 			});
 
-			const query = "Hãy lấy ra toàn bộ chi tiết về sản phẩm, loại trừ các thông tin về kho, bãi, người bán?";
+			const query =
+				`Hãy lấy ra toàn bộ chi tiết về sản phẩm, loại trừ các thông tin về kho, bãi, người bán?
+				Lấy ra giá sản phẩm trong các dữ liệu đầu vào, để tính trung bình giá sản phẩm?`;
 
 			const response = await queryEngine.query({
 				query,
