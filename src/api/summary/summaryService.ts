@@ -22,6 +22,7 @@ import {
 	VectorStoreIndex,
 	TreeSummarizePrompt,
 } from "llamaindex";
+import { GeminiApiKeysRotator } from "@/common/utils/geminiApiKeysRotator";
 
 const SUMMARY_TYPE = {
 	LONG: "dài (từ 500 đến 1000 từ, không được vượt quá 1000 từ)",
@@ -37,6 +38,8 @@ export class SummaryService {
 		summaryType: `${keyof typeof SUMMARY_TYPE}` = "MEDIUM"
 	): Promise<ServiceResponse<Summary | null>> {
 		try {
+			GeminiApiKeysRotator.getInstance().setEnvNextKey();
+
 			const googleLLM = new Gemini({
 				model: GEMINI_MODEL.GEMINI_2_0_FLASH,
 				temperature: 0,
@@ -400,12 +403,17 @@ export class SummaryService {
 		inputTexts: string[]
 	): Promise<ServiceResponse<Summary | null>> {
 		try {
+			// const apiKey = GeminiApiKeysRotator.getInstance().useNextKey();
+			// // Đặt lại vào process.env.GOOGLE_API_KEY
+			// process.env.GOOGLE_API_KEY = apiKey;
+			GeminiApiKeysRotator.getInstance().setEnvNextKey();
+
 			const embedding = new GeminiEmbedding({
 				model: GEMINI_EMBEDDING_MODEL.TEXT_EMBEDDING_004,
 			});
 
 			const googleLLM = new Gemini({
-				model: GEMINI_MODEL.GEMINI_2_0_FLASH,
+				model: GEMINI_MODEL.GEMINI_2_0_FLASH_LITE,
 				temperature: 0,
 			});
 

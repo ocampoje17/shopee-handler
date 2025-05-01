@@ -23,8 +23,8 @@ class SummaryController {
 		req: Request,
 		res: Response
 	) => {
-		const rawInfo = req.body.rawInfo;
-		const serviceResponse = await summaryService.getInformation();
+		const inputTexts = req.body.inputTexts;
+		const serviceResponse = await summaryService.getInfo(inputTexts);
 		return handleServiceResponse(serviceResponse, res);
 	};
 }
