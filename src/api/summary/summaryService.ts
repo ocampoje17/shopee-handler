@@ -441,8 +441,10 @@ export class SummaryService {
 			});
 
 			const query =
-				`Hãy lấy ra toàn bộ chi tiết về sản phẩm, loại trừ các thông tin về kho, bãi, người bán?
-				Lấy ra giá sản phẩm trong các dữ liệu đầu vào, để tính trung bình giá sản phẩm?`;
+				`Hãy lấy ra tối đa toàn bộ chi tiết về sản phẩm, đặc biệt là đặc điểm hình thức bên ngoài, các thông số, tính năng, ưu điểm của sản phẩm, loại trừ các thông tin về kho, bãi, người bán?
+				Đảm bảo rằng các thông tin được lấy ra là chính xác và đầy đủ nhất có thể. \n
+				Nếu đầu vào là ngôn ngữ khác tiếng Việt, hãy dịch sang tiếng Việt rồi lấy các thông tin như yêu cầu\n
+				Nội dung tối thiểu là 1000 từ, tối đa là 2000 từ. \n`;
 
 			const response = await queryEngine.query({
 				query,
