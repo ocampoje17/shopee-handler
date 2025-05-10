@@ -24,7 +24,8 @@ class SummaryController {
 		res: Response
 	) => {
 		const inputTexts = req.body.inputTexts;
-		const serviceResponse = await summaryService.getInfo(inputTexts);
+		const productTitle = req.body.productTitle;
+		const serviceResponse = await summaryService.getInfo(productTitle, inputTexts);
 		return handleServiceResponse(serviceResponse, res);
 	};
 }

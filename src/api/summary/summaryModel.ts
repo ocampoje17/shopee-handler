@@ -23,6 +23,7 @@ export const CreateSummarySchema = z.object({
 
 export const RetriveInfoSchema = z.object({
 	body: z.object({
+		productTitle: z.string(),
 		inputTexts: z.array(z.string()),
 	}),
 });
